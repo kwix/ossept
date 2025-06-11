@@ -1,0 +1,64 @@
+---
+// Feature Cards grid Section
+// ------------
+// Description: A grid of cards with feature information in a 4 column layout.
+
+// Components
+// - Layout
+import Section from '../../ui/Section.astro'
+import Row from '../../ui/Row.astro'
+import Col from '../../ui/Col.astro'
+// - UI
+import Card from '../../ui/cards/FeatureCard.astro'
+
+// Content
+// - Cards
+import feature01 from '../../../assets/cards/ossept7.jpeg'
+import feature02 from '../../../assets/cards/ele_ossept.jpeg'
+import feature03 from '../../../assets/cards/lunch1.jpeg'
+import feature04 from '../../../assets/cards/premio2.jpeg'
+import feature05 from '../../../assets/cards/orquesta.jpeg'
+---
+
+<Section id="features">
+	<Row>
+		<Col span="12" align="center" classes="mb-12 max-w-4xl mx-auto">
+			<h2 class="text-pretty">Nos renovamos con una gran fiesta <strong>Elección de la Nueva Junta Directiva</strong> </h2>
+			<p class="pb-0 text-lg">
+				Cumpliendo con nuestra razón de ser y espíritu sindical, pero tambien tuvimos un tiempo para 
+				compartir con todos nuestros afiliados, nuestra gran familia Ossept. 
+			</p>
+		</Col>
+	</Row>
+	
+	<Row>
+		<Col span="4">
+			<Card
+				title="Seguimiento a los acuerdos Sindicales"
+				image={feature01}
+				subtitle="Nos reunimos con la administración municipal, para conocer el avance en el cumplimiento del Decreto 895 de 2024."
+				link="/pricing"
+				
+			/>
+			
+		</Col>
+		<Col span="4" classes="flex flex-col gap-6">
+			<Card
+				title="Cumpliendo con la renovación, Elección de la Nueva Junta Directiva de OSSEPT"
+				image={feature02}
+				subtitle="Una gran celebración sindical, donde cada miembro de nuestra organización hizo uso de su derecho a elegir, dando cumplimiento a lo consignado en nuestros estatutos."
+				link="/pricing"
+			/>
+			
+		</Col>
+		<Col span="4" classes="flex flex-col gap-6">
+			<Card
+				title="Celebramos nuestro primer Aniversario"
+				image={feature03}
+				subtitle="Un evento sin precedentes."
+				link="/pricing"
+			/>
+			
+		</Col>
+	</Row>
+</Section>

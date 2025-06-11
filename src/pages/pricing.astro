@@ -1,0 +1,68 @@
+---
+// Components
+// - Layout
+import Layout from '../layouts/Layout.astro'
+// - UI
+import Hero from '../components/blocks/hero/PageHeader.astro'
+import Price from '../components/blocks/pricing/PricingColumns.astro'
+import SocialProof from '../components/blocks/socialproof/Basic.astro'
+import FAQ from '../components/blocks/FAQ/Basic.astro'
+import Testimonial from '../components/blocks/testimonials/BasicDark.astro'
+import Feature from '../components/blocks/features/FeatureList.astro'
+import CTA from '../components/blocks/CTA/BasicDark.astro'
+
+// Content
+// - SEO
+const SEO = {
+	title: 'Noticias Importantes',
+	description:
+		'Noticias y acontecimientos de nuestra organización sindical '
+}
+// - Page Header
+const header = {
+	title: 'Elección <strong>Nueva Junta Directiva</strong>',
+	text: 'Cumpliendo con nuestra razón de ser y espíritu sindical, pero tambien tuvimos un tiempo para compartir con todos nuestros afiliados, nuestra gran familia Ossept.'
+}
+// - Testimonial data
+import testimonialBackground from '../assets/eleccion.jpeg'
+import testimonialBackground1 from '../assets/eleccion.jpeg'
+import testimonialBackground2 from '../assets/auditorio1.jpeg'
+
+const cumple = {
+	title: 'Una Celebración con <strong>Categoria!</strong>',
+	text: 'Un evento cargado de desafíos pero llevado a cabo con un rotundo éxito.'
+}
+const sigue = {
+	title: 'Seguimiento a los acuerdos sindicales <strong>Decreto 895 de 2024.</strong>',
+	text: 'Nos reunimos con la administración municipal para hacer seguimiento a los compromisos pactados en nuestro gran acuerdo sindical.'
+}
+
+
+/*const testimonialData = {
+	blockquote:
+		'Foxi isnt just an app—its like having a mischievous yet brilliant sidekick for your business. It streamlines tasks and also cracks jokes to keep spirits high',
+	figcaption: 'Max Widgetson',
+	cite: ' CEO, Widgetify Ltd'
+}*/
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={sigue.title} text={sigue.text} />
+	<Testimonial
+		bg={testimonialBackground} 
+		bgPosition="center"/>
+	<Hero title={header.title} text={header.text} />
+	<Testimonial
+		bg={testimonialBackground1} 
+		bgPosition="center"/>
+	<Hero title={cumple.title} text={cumple.text} />
+	<Testimonial
+		bg={testimonialBackground2} 
+		bgPosition="center"/>
+	<!--<Price />
+	<SocialProof />
+	<Feature />
+	
+	<FAQ classes="bg-slate-50 dark:bg-neutral-900/40" /> 
+	<CTA />-->
+</Layout>

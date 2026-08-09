@@ -8,7 +8,7 @@ import netlify from  "@astrojs/netlify";
 // https://astro.build/config
 export default defineConfig({
   site: "https://kecatoca.github.io",
-  output: "server",
+  output: 'server',
   adapter: netlify(),
   integrations: [
     tailwind(),

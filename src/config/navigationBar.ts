@@ -48,7 +48,7 @@ export const navigationBarData: NavData = {
 				{ name: 'Misión', link: '/blog' },
 				{ name: 'Visión', link: '/changelog' },
 				{ name: 'Certificados de Afiliación', link: '/faq' },
-				{ name: 'Acuerdos Colectivos', link: '/terms' }
+				{ name: 'Ficha de Caracterización', link: '/terms' }
 			]
 		},
 		{ name: 'Contáctenos', link: '/contact' }

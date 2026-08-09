@@ -16,20 +16,29 @@ import { getCollection } from 'astro:content'
 // Content
 // - SEO
 const SEO = {
-	title: 'Foxi | Latest Foxi News and updates',
+	title: 'Nuestra Misión | OSSEPT',
 	description:
-		"Explore Foxi's latest news designed to enhance productivity, ensure top-notch security, and integrate seamlessly with your favorite tools. Join thousands of satisfied users and transform your workflow with Foxi today!"
+		"Creando unidad sindical"
 }
 // - Page Header
 const header = {
-	title: 'The <strong>Foxi</strong> Blog. Tips, Updates & Stories',
-	text: 'Stay informed, stay productive. All the latest from the world of Foxi.'
+	title: '<span class="text-cyan-500">Nuestra Misión</span>',
+	paragraphs: [
+		'Fortalecer la representatividad, la unidad sindical y el despliegue de la capacidad de OSSEPT, generando iniciativas y propuestas que contribuyan al logro de mejores condiciones de trabajo para el bienestar de los funcionarios públicos y de sus familias.',
+		'Las organizaciones sindicales como OSSEPT definen la eficacia del desarrollo como la generación de resultados sociales positivos en términos de trabajo decente, protección social, diálogo social, respeto de los derechos humanos y sindicales, igualdad de género, sostenibilidad medioambiental, bienestar y un sustento de vida digno para todas las personas.',
+		'Con el compromiso de todos para:'
+	],
+	listItems: [
+		'Impulsar el liderazgo y la formación integral de los trabajadores.',
+		'Gestionar condiciones excelentes de salud, seguridad y buenas prácticas laborales.',
+		'Fortalecer la unidad y la solidaridad, generando espacios para dirimir diferencias.',
+		'Luchar con vehemencia para defender los derechos de los servidores públicos territoriales.',
+		'Manejar con transparencia y honestidad los recursos de la organización.'
+	]
 }
 
 const allPosts = await getCollection('blog')
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
-	<Hero title={header.title} text={header.text} />
-	<BlogPosts data={allPosts} />
-</Layout>
+		<Hero title={header.title} titleClasses="text-cyan-500" paragraphs={header.paragraphs} listItems={header.listItems} />

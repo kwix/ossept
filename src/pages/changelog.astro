@@ -13,19 +13,31 @@ import feedData from '../data/json-files/changelogData.json'
 // Content
 // - SEO
 const SEO = {
-	title: 'OSSEPT',
+	title: 'Nuestra Visión | OSSEPT',
 	description:
-		"Organización Sindical de Servidores Públicos Territoriales"
-}
+		"Creando unidad sindical"
+		}
 // - Page Header
 const header = {
-	title: 'Foxi Version Updates and <strong>Enhancements</strong>',
-	text: 'Stay informed about all the new updates and improvements in Foxi.'
+	title: '<span class="text-cyan-500">Nuestra Visión</span>',
+	paragraphs: [
+		'Consolidarnos como una organización sindical moderna que transforme la cultura y el ámbito sindical, logrando ser reconocida por su liderazgo y defensa laboral, una urganizacion integrada por un equipo de personas comprometidos, con responsabilidad social y valores que sirvan e inspiren confianza entre los afiliados y en la protección de sus derechos.',
+		'Entendemos el desarrollo como un proceso de avance económico, social, cultural, político y democrático de las sociedades humanas que debe ser sostenible e inclusivo.',
+		'Queremos ser reconocidos por:'
+	],
+	listItems: [
+		'La capacidad de convocatoria.',
+		'Defensa de los derechos de los trabajadores.',
+		'Logros sociales y políticos.',
+		'Combatividad.',
+		'Defensa de los recursos naturales.',
+		'Valores.',
+		'Honestidad.',
+		'Respeto y tolerancia.',
+		'Rescate de los valores institucionales.'
+	]
 }
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
-	<!--<Hero title={header.title} text={header.text} />
-	<SimpleFeed data={feedData} />-->
-	
-</Layout>
+		<Hero title={header.title} titleClasses="text-cyan-500" paragraphs={header.paragraphs} listItems={header.listItems} />

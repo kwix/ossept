@@ -14,17 +14,36 @@ type Props = {
 	id?: string
 	title?: string
 	text?: string
+	paragraphs?: string[]
+	listItems?: string[]
 	classes?: string
+	titleClasses?: string
 }
-const { id = 'intro', title, text, classes } = Astro.props
+const { id = 'intro', title, text, paragraphs, listItems, classes, titleClasses } = Astro.props
+const titleColorClasses = titleClasses || 'text-neutral-900 dark:text-neutral-50'
+const headerParagraphs = Array.isArray(paragraphs)
+	? paragraphs
+	: String(text || '')
+		.split(/\n{2,}/)
+		.map((paragraph) => paragraph.trim())
+		.filter(Boolean)
 ---
 
 <Section id={id} classes=`bg-neutral-50 dark:bg-neutral-900 ${classes}`>
 	<Row>
 		<Col span="12" align="center">
 			<header class="page-header">
-				<h1 class="page-header__title" set:html={title} />
-				<p class="page-header__text" set:html={text} />
+				<h1 class={`page-header__title ${titleColorClasses}`} set:html={title} />
+				{headerParagraphs.map((paragraph) => (
+					<p class="page-header__text">{paragraph}</p>
+				))}
+				{Array.isArray(listItems) && listItems.length > 0 ? (
+					<ul class="page-header__list">
+						{listItems.map((item) => (
+							<li>{item}</li>
+						))}
+					</ul>
+				) : null}
 			</header>
 		</Col>
 	</Row>
@@ -34,7 +53,16 @@ const { id = 'intro', title, text, classes } = Astro.props
 	.page-header {
 		@apply mx-auto max-w-3xl;
 	}
+	.page-header__title {
+		/* Color now se define con titleClasses para permitir personalización */
+	}
 	.page-header__text {
-		@apply text-lg leading-relaxed;
+		@apply text-lg leading-relaxed text-justify text-neutral-700 dark:text-neutral-300;
+	}
+	.page-header__list {
+		@apply mt-4 list-disc list-inside text-left text-lg leading-relaxed text-neutral-700 dark:text-neutral-300;
+	}
+	.page-header__list li {
+		@apply mt-2;
 	}
 </style>

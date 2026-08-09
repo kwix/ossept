@@ -40,15 +40,15 @@ export const navigationBarData: NavData = {
 	navItems: [
 		{ name: 'Inicio', link: '/' },
 		{ name: 'Noticias', link: '/pricing' },
-		{ name: 'Directivos', link: '/features' },
+		{ name: 'Formación', link: '/features' },
 		{
 			name: 'Nuestra Organización',
 			link: '#',
 			submenu: [
 				{ name: 'Misión', link: '/blog' },
 				{ name: 'Visión', link: '/changelog' },
-				{ name: 'Estatutos', link: '/faq' },
-				{ name: 'Acuerdos', link: '/terms' }
+				{ name: 'Certificados de Afiliación', link: '/faq' },
+				{ name: 'Acuerdos Colectivos', link: '/terms' }
 			]
 		},
 		{ name: 'Contáctenos', link: '/contact' }

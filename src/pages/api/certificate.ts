@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
-import fs from 'fs/promises'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import { createClient } from '@supabase/supabase-js'
+import certificateTemplateUrl from '../../assets/Certificado modelo.pdf?url'
 
 export const prerender = false
 
@@ -144,8 +144,6 @@ export const POST: APIRoute = async ({ request }) => {
   const contentType = request.headers.get('content-type') ?? ''
   const rawBody = await request.text().catch(() => '')
 
-  console.log('certificate request', { contentType, rawBody })
-
   if (contentType.includes('application/json') || rawBody.startsWith('{') || rawBody.startsWith('[')) {
     if (rawBody) {
       try {
@@ -239,8 +237,29 @@ export const POST: APIRoute = async ({ request }) => {
   const month = monthNames[now.getMonth()]
   const year = now.getFullYear()
 
-  const templatePdfBytes = await fs.readFile(new URL('../../assets/Certificado modelo.pdf', import.meta.url))
-  const pdfDoc = await PDFDocument.load(templatePdfBytes)
+  let pdfDoc: PDFDocument
+
+  try {
+    const templateResponse = await fetch(new URL(certificateTemplateUrl, request.url))
+
+    if (!templateResponse.ok) {
+      console.error('Certificate template request failed', { status: templateResponse.status })
+      return new Response(JSON.stringify({ error: 'No se pudo cargar la plantilla del certificado.' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    const templatePdfBytes = await templateResponse.arrayBuffer()
+    pdfDoc = await PDFDocument.load(templatePdfBytes)
+  } catch (templateError) {
+    console.error('Certificate template loading failed', templateError)
+    return new Response(JSON.stringify({ error: 'No se pudo cargar la plantilla del certificado.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
   const page = pdfDoc.getPage(0)
   const { width, height } = page.getSize()
 

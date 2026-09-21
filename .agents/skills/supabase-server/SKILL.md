@@ -28,17 +28,18 @@ Server-side utilities for Supabase. Handles auth, client creation, and context i
 
 - Wraps fetch handlers with credential verification, CORS, and pre-configured Supabase clients
 - Supports 4 auth modes: `user` (JWT), `publishable` (publishable key), `secret` (secret key), `none` (no credentials required)
-- Array syntax (`auth: ['user', 'secret']`) is first-match-wins. A present-but-invalid JWT rejects with `InvalidCredentialsError` — it does not silently downgrade to the next mode.
+- Array syntax (`auth: ['user', 'secret']`) is first-match-wins. A present-but-invalid JWT rejects with `InvalidJwtError` (`INVALID_JWT`) — it does not silently downgrade to the next mode.
 - Provides composable core primitives for custom auth flows and framework integration
 - Includes a Hono adapter for per-route auth
 
 ## Entry points
 
-| Import                           | Deno / Edge Functions                | Provides                                                                                                          |
-| -------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `@supabase/server`               | `npm:@supabase/server`               | `withSupabase`, `createSupabaseContext`, types, errors                                                            |
-| `@supabase/server/core`          | `npm:@supabase/server/core`          | `verifyAuth`, `verifyCredentials`, `extractCredentials`, `resolveEnv`, `createContextClient`, `createAdminClient` |
-| `@supabase/server/adapters/hono` | `npm:@supabase/server/adapters/hono` | `withSupabase` (Hono middleware variant)                                                                          |
+| Import                                      | Deno / Edge Functions                           | Provides                                                                                                                                                                |
+| ------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@supabase/server`                          | `npm:@supabase/server`                          | `withSupabase`, `createSupabaseContext`, types, errors                                                                                                                  |
+| `@supabase/server/core`                     | `npm:@supabase/server/core`                     | `verifyAuth`, `verifyCredentials`, `extractCredentials`, `resolveEnv`, `createContextClient`, `createAdminClient`                                                       |
+| `@supabase/server/adapters/hono`            | `npm:@supabase/server/adapters/hono`            | `withSupabase` (Hono middleware variant)                                                                                                                                |
+| `@supabase/server/oauth-protected-resource` | `npm:@supabase/server/oauth-protected-resource` | **Alpha.** `withOAuthProtectedResource`, `fromSupabaseUrl`, `resourceMetadataResponse`, `unauthorizedResponse` — OAuth 2.1 discovery for MCP servers; see `docs/mcp.md` |
 
 ## Quick starts
 
@@ -194,6 +195,24 @@ await fetch('https://<project>.supabase.co/functions/v1/my-function', {
 
 Bare `auth: 'secret'` matches only the `default` key. Use `auth: 'secret:name'` to require a specific named key, or `auth: 'secret:*'` to accept any secret key in the set.
 
+## Pin user tokens to one project
+
+`audience` and `issuer` check the `aud` and `iss` claims of a `user`-mode token. Each takes a string or an array. A token without the claim, or with a value outside the list, is rejected with `INVALID_JWT`. Set `issuer: fromSupabaseUrl(url)` when one JWKS could be shared across projects or services. Supabase Auth sets `aud` to `authenticated`, so `audience` only matters for tokens from a custom issuer. Both options exist on `withSupabase`, `verifyAuth`, `verifyCredentials`, `withClaims`, and `withRequiredClaims`.
+
+```ts
+import { fromSupabaseUrl, withSupabase } from 'npm:@supabase/server'
+
+export default {
+  fetch: withSupabase(
+    {
+      auth: 'user',
+      issuer: fromSupabaseUrl(Deno.env.get('SUPABASE_URL')!),
+    },
+    async (req, ctx) => Response.json({ user: ctx.userClaims }),
+  ),
+}
+```
+
 ## When to use `auth: 'none'`
 
 > **`auth: 'none'` disables all authentication.** The handler runs for every request with no credential checks. Only use it when auth is genuinely unnecessary — health checks, public status pages, or endpoints with no sensitive data and no side effects.
@@ -205,7 +224,9 @@ Bare `auth: 'secret'` matches only the `default` key. Use `auth: 'secret:name'` 
 
 **Never use `auth: 'none'` for endpoints that read or write user data without verifying who the caller is.**
 
-**On `auth: ['user', 'none']`.** A stale or malformed JWT on such an endpoint is rejected with `InvalidCredentialsError` — it is not silently downgraded to anonymous. Callers that might hold a cached/expired token should either omit the `Authorization` header entirely or refresh before calling. If the goal is "anonymous unless a valid user is signed in," this is the correct behavior; if the goal is truly "accept anything," use `auth: 'none'` on its own.
+**On `auth: ['user', 'none']`.** A stale or malformed JWT on such an endpoint is rejected with `InvalidJwtError` (`INVALID_JWT`) — it is not silently downgraded to anonymous. Callers that might hold a cached/expired token should either omit the `Authorization` header entirely or refresh before calling. If the goal is "anonymous unless a valid user is signed in," this is the correct behavior; if the goal is truly "accept anything," use `auth: 'none'` on its own.
+
+**`'none'` goes last, or alone.** It matches every request, so the type accepts it only as the final entry of a list (`['user', 'none']`) or on its own (`'none'`). `['none']` and `['none', 'user']` are type errors — write the bare `'none'` for the first, and put `'none'` last for the second.
 
 ## Edge Function recipes
 
@@ -411,17 +432,18 @@ The full documentation lives in the `docs/` directory of the `@supabase/server` 
 - **If working inside the SDK repo:** `docs/` is at the project root.
 - **If the package is installed as a dependency:** look in `node_modules/@supabase/server/docs/`.
 
-| Question                                                            | Doc file                        |
-| ------------------------------------------------------------------- | ------------------------------- |
-| How do I create a basic endpoint?                                   | `docs/getting-started.md`       |
-| What auth modes are available? Array syntax? Named keys?            | `docs/auth-modes.md`            |
-| Which framework adapters exist? How do I contribute one?            | `src/adapters/README.md`        |
-| How do I use this with Hono?                                        | `docs/adapters/hono.md`         |
-| How do I use this with H3 / Nuxt?                                   | `docs/adapters/h3.md`           |
-| How do I use low-level primitives for custom flows?                 | `docs/core-primitives.md`       |
-| How do environment variables work across runtimes?                  | `docs/environment-variables.md` |
-| How do I handle errors? What codes exist?                           | `docs/error-handling.md`        |
-| How do I get typed database queries?                                | `docs/typescript-generics.md`   |
-| How do I use this with `@supabase/ssr` (Next.js, SvelteKit, Remix)? | `docs/ssr-frameworks.md`        |
-| What's the complete API surface?                                    | `docs/api-reference.md`         |
-| What security decisions does this package make?                     | `docs/security.md`              |
+| Question                                                                              | Doc file                        |
+| ------------------------------------------------------------------------------------- | ------------------------------- |
+| How do I create a basic endpoint?                                                     | `docs/getting-started.md`       |
+| What auth modes are available? Array syntax? Named keys?                              | `docs/auth-modes.md`            |
+| Which framework adapters exist? How do I contribute one?                              | `src/adapters/README.md`        |
+| How do I use this with Hono?                                                          | `docs/adapters/hono.md`         |
+| How do I use this with H3 / Nuxt?                                                     | `docs/adapters/h3.md`           |
+| How do I use low-level primitives for custom flows?                                   | `docs/core-primitives.md`       |
+| How do environment variables work across runtimes?                                    | `docs/environment-variables.md` |
+| How do I handle errors? What codes exist?                                             | `docs/error-handling.md`        |
+| How do I get typed database queries?                                                  | `docs/typescript-generics.md`   |
+| How do I use this with `@supabase/ssr` (Next.js, SvelteKit, Remix)?                   | `docs/ssr-frameworks.md`        |
+| How do I build an MCP server my users connect to (OAuth discovery, RLS-scoped tools)? | `docs/mcp.md`                   |
+| What's the complete API surface?                                                      | `docs/api-reference.md`         |
+| What security decisions does this package make?                                       | `docs/security.md`              |
